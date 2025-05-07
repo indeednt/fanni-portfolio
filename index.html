@@ -1,1 +1,137 @@
-<h1>test</h1>
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Isakov Fanni</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Faculty+Glyphic&display=swap" rel="stylesheet">
+</head>
+<body>
+  <h1>Isakov Fanni</h1>
+
+  <img src="assets/img_01.jpg" alt="Example Image" class="zoomable" width="400px" />
+
+  <div class="lightbox" id="lightbox">
+      <button class="close-btn" id="closeBtn">✕</button>
+      <img src="" alt="Zoomed Image" id="lightbox-img" />
+  </div>
+</body>
+</html>
+
+<style>
+    body {
+      font-family: "Faculty Glyphic", sans-serif;
+      background-color: #CFDBD5;
+      background-color: #EDDACE;
+      background-color: #c7bcb6;
+      background-color: #e2d0cf;
+      padding: 20px;
+    }
+
+    img {
+      max-width: 100%;
+      height: auto;
+      cursor: zoom-in;
+      transition: transform 0.3s ease;
+    }
+
+    .lightbox {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.9);
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    .lightbox.show {
+      display: flex;
+    }
+
+    .lightbox img {
+      max-width: none;
+      max-height: none;
+      cursor: zoom-in;
+      transition: transform 0.3s ease;
+      user-select: none;
+      position: relative;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 28px;
+      color: white;
+      cursor: pointer;
+      background: rgba(0, 0, 0, 0.5);
+      border: none;
+      padding: 5px 12px;
+      border-radius: 4px;
+      z-index: 10000;
+    }
+</style>
+
+<script>
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const closeBtn = document.getElementById('closeBtn');
+
+    let zoomedIn = false;
+
+    document.querySelectorAll('.zoomable').forEach(img => {
+      img.addEventListener('click', () => {
+        lightboxImg.src = img.src;
+        lightbox.classList.add('show');
+        lightboxImg.style.height = '90%';
+        zoomedIn = false;
+      });
+    });
+
+    lightboxImg.addEventListener('click', (e) => {
+      e.stopPropagation();
+
+      if (zoomedIn) {
+        lightboxImg.style.transform = 'scale(1)';
+        zoomedIn = false;
+        return;
+      }
+
+      const rect = lightboxImg.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const clickY = e.clientY - rect.top;
+
+      const offsetX = ((clickX / rect.width) - 0.5) * 2; // -1 to 1
+      const offsetY = ((clickY / rect.height) - 0.5) * 2;
+
+      const zoom = 2;
+
+      lightboxImg.style.transform = `
+        scale(${zoom})
+        translate(${-offsetX * 50}%, ${-offsetY * 50}%)
+      `;
+      zoomedIn = true;
+    });
+
+    closeBtn.addEventListener('click', () => {
+      lightbox.classList.remove('show');
+      lightboxImg.style.transform = 'scale(1)';
+      zoomedIn = false;
+    });
+
+    lightbox.addEventListener('click', (e) => {
+      if (e.target === lightbox) {
+        lightbox.classList.remove('show');
+        lightboxImg.style.transform = 'scale(1)';
+        zoomedIn = false;
+      }
+    });
+</script>
